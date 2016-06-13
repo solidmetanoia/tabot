@@ -196,7 +196,12 @@ function bot() {
                     //var e = jQuery.Event("mousedown", {pageX: 300, pageY: 500}); //次
                 } else if(which_event == event_types.Arena){        // ARENA
                     console.log("Arena Layer 2");
-                    var attack_rank = 100; var atk_id = 0;
+                    var attack_rank
+                    if(attack_str)
+                        attack_rank = 100;
+                    else 
+                        attack_rank = 0;
+                    var atk_id = 0;
                     var your_rank = $(".arena_rank_frame").text().split("ク");
                     your_rank = your_rank[1];
                     var i = 0; 
