@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Taimanin Asagi Battle Bot
-// @version     0.3
+// @version     0.5
 // @description A bot for TABA for when you can't participate in Events but still want to. It will focus on Events if any are online, if not, regular missions.
 // @author      :piercer / @aernbau
 // @match       http://osapi.dmm.com/gadgets/ifr*gadget_asagi*
@@ -71,6 +71,7 @@ $("body").append(area_string);
 $("#botstatus").text("Bot available.");
 
 var post_start = false; var run = false;
+var hp_split; var bp_split; var adv = false;
 // Levels deep is how deep in the menu you are.
 // 0 - main menu. 1 - event menu. 2 - event where you click.
 var layer = 0; var bp_used = 2; var attack_str = true;
@@ -96,17 +97,17 @@ function bot() {
             post_start = true;
         }
         else{
-            var hp_split = $("#red_gage_num").text().split("/");
-            var bp_split = $("#top_bp_num").text().split("/");
+            hp_split = $("#red_gage_num").text().split("/");
+            bp_split = $("#top_bp_num").text().split("/");
             //$("#plr_status").text("HP: "+hp_split[0]+"; BP: "+bp_split[0]);
             if(layer==0){ // BASE LAYER
                 $("#plr_status").text("HP: "+$("#red_gage_num").text()+"; BP: "+bp_split[0]);
                 // Confirming event type (3 options)
-                if($("#main_frame").find('> a > img[alt="レイドイベント"]').length){
+                if($("#main_frame").find("> a > img[alt='レイドイベント']").length){
                     which_event = event_types.RaidMap;
                     $('img[alt="レイドイベント"]')[0].click();
-                    $("#botstatus").text("Map Event mode.");
-                }else if($("#main_frame").find('> a > img[alt="PVPイベント"]').length){
+                    $("#botstatus").text("Map or Clicker mode.");
+                }else if($("#main_frame").find("> a > img[alt='PVPイベント']").length){
                     which_event = event_types.Arena;
                     $('img[alt="PVPイベント"]')[0].click();
                     $("#botstatus").text("PVP Event mode.");
@@ -115,6 +116,12 @@ function bot() {
                 layer = 1;
             } else if(layer==1){ // LAYER ONE   /////////////////////////////////////
                 $("#plr_status").text("HP: "+$("#red_gage_num").text()+"; BP: "+bp_split[0]);
+                if($("#map").length){
+                    $("#botstatus").text("Map Event mode.");
+                } else {
+                    which_event = event_types.Clicker;
+                    $("#botstatus").text("Clicker mode.");
+                }
                 // While I could use Switch here, ifs are easier to see.
                 if(which_event == event_types.RaidMap){                 // MAP EVENT
                     console.log("Raid Layer 1");
@@ -174,6 +181,23 @@ function bot() {
                         $(".top_menu_2")[0].click(); // top menu č is arena.
                         layer = 2;
                     }
+                } else if(which_event == event_types.Clicker){
+                    var loc_str = "";
+                    if($("img[alt='レイドイベント']").length){
+                        console.log("Clicker Layer 1.");
+                        if(!($("img[alt='レイドアラートアイコン']").length && bp_split[0] > 0)){
+                            $("img[alt='ステージ']").click();
+                            layer = 2;
+                        } else {
+                            loc_str = "Raid enemies exist. ";
+                            if(bp_split[0] > 0){
+                                loc_str += "Attacking.";
+                                $("img[alt='レイドアラートアイコン']").click();
+                                layer = 3; // SKIPPING TO LAYER 3 IF RAID
+                            } else {loc_str += "Need at least 1 BP.";}
+                            console.log(loc_str);
+                        }
+                    }
                 }
                 
             } else if(layer == 2){ // LAYER TWO /////////////////////////////////////
@@ -196,7 +220,7 @@ function bot() {
                     //var e = jQuery.Event("mousedown", {pageX: 300, pageY: 500}); //次
                 } else if(which_event == event_types.Arena){        // ARENA
                     console.log("Arena Layer 2");
-                    var attack_rank
+                    var attack_rank;
                     if(attack_str)
                         attack_rank = 100;
                     else 
@@ -212,7 +236,7 @@ function bot() {
                         $(this).attr('id','enemy_'+i);
                         $(this).find("> a > div > div").first().find("> div").eq(2).attr('id','rank_'+i);
                         var rank_str = $("#rank_"+i).text().split("ク");
-                        rank_str = parseInt(rank_str[1], 10);;
+                        rank_str = parseInt(rank_str[1], 10);
                         //CHECK IF BLUGRD HERE
                         if($("#enemy_"+i).find(".blue_grd").length){
                             console.log("Enemy "+i+" = "+rank_str+" is Rank Up enemy. Skipping. AtkID: "+atk_id);
@@ -232,7 +256,7 @@ function bot() {
                         } 
                         // [li] -> [a] -> [div] -> [img, [div], div, div] -> [div, div, div, div]
                     });
-                    var bp = $("#top_bp_num").text().split("/");
+                    bp = $("#top_bp_num").text().split("/");
                     if(bp[0] >= bp_used && atk_id != 100){
                         console.log("Enough health remaining. Enemy ID = "+atk_id);
                         //$("#enemy_"+atk_id).click();
@@ -248,10 +272,44 @@ function bot() {
                     } else if (bp[0] < bp_used){
                         $(".top_menu_2")[0].click(); // Refreshing the PvP list
                     }
+                } else if(which_event == event_types.Clicker){        // CLICKER
+                    YUI().use('node-event-simulate', function(Y) {
+                        var node = Y.one("#canvas");
+                        // if 100% PUT INTO MEMORY TO CLICK A DIFFERENT LOCATION 2ND TURN
+                        if($("#stage_per").length){
+                            if($("#stage_per").text() == "100"){
+                                adv = true;
+                                console.log("Stage clear.");
+                            }
+                            if( parseInt(hp_split[0], 10) > parseInt($("#quest_status_window_1").text(), 10)){
+                            console.log("Progressing. HP currently: "+hp_split[0]+"; HP needed: "+$("#quest_status_window_1").text());
+                            node.simulate("mousedown", { clientX: 150, clientY: 450 });    
+                            //node.simulate("click", { clientX: 150, clientY: 450 });    
+                            } else {
+                                $("#mypage")[0].click();
+                                layer = 0;
+                            }
+                            console.log
+                        } else {
+                            if(adv){
+                                console.log("Clicking STAGE CLEAR.");
+                                node.simulate("mousedown", { clientX: 460, clientY: 460 });    
+                                node.simulate("click", { clientX: 460, clientY: 460 });  
+                                node.simulate("mouseup", { clientX: 460, clientY: 460 });    
+                                adv = false;
+                            }
+                        }
+                                                
+                        
+                        
+                    });
+                    // 450,350 xy = PLEASE CONTINUE
+                    // 150,450 xy = CLICK WHEN RAID APPEARS. BETTER FOR GENERLA
                 }
             } else if(layer == 3){ // LAYER THREE /////////////////////////////////////
                 if(which_event == event_types.RaidMap){
                     // Moving towards boss if one exists requires coordinate clicks on canvas.
+                    map_l3_order = 0;
                     console.log("Arena Layer 3");
                     YUI().use('node-event-simulate', function(Y) {
                         var node = Y.one("#canvas");
@@ -292,6 +350,28 @@ function bot() {
                     //$("#mypage").click();
                     //setTimeout(function(){$("#botstatus").click();},500);
                     
+                } else if(which_event == event_types.Clicker){
+                    
+                    YUI().use('node-event-simulate', function(Y) {
+                        var node = Y.one("#canvas");
+                        switch(map_l3_order){
+                            case 0: console.log("Clicker Layer RAID"); $(".friend_frame")[0].click(); map_l3_order = 1; break;
+                            case 1: $("#battle_start_button").click(); map_l3_order = 2; break;
+                            case 2: if($("img[alt='ファイスアイコン']").length)
+                                        $("img[alt='ファイスアイコン']")[0].click(); 
+                                    map_l3_order = 3; break;
+                            case 3: $("#quest_attack_1").click(); map_l3_order++; break;
+                            case 4: map_l3_order++; break;
+                            case 5: node.simulate("mousedown", { clientX: 290, clientY: 100 }); map_l3_order++; break;
+                            case 6: node.simulate("mousedown", { clientX: 460, clientY: 460 }); map_l3_order++; break;
+                            case 7: map_l3_order++; break;
+                            case 8: node.simulate("mousedown", { clientX: 460, clientY: 490 }); 
+                                    node.simulate("click", { clientX: 460, clientY: 490 });
+                                    node.simulate("mouseup", { clientX: 460, clientY: 490 });
+                                    map_l3_order++; break;
+                            case 9: $("#mypage")[0].click(); map_l3_order = 0; layer = 0; break;
+                        }
+                    });
                 }
             }
         }
