@@ -363,14 +363,17 @@ function bot() {
                                     map_l3_order = 3; break;
                             case 3: $("#quest_attack_1").click(); map_l3_order++; break;
                             case 4: map_l3_order++; break;
-                            case 5: node.simulate("mousedown", { clientX: 290, clientY: 100 }); map_l3_order++; break;
-                            case 6: node.simulate("mousedown", { clientX: 460, clientY: 460 }); map_l3_order++; break;
-                            case 7: map_l3_order++; break;
-                            case 8: node.simulate("mousedown", { clientX: 460, clientY: 490 }); 
+                            case 5: map_l3_order++; break;
+                            case 6: node.simulate("mousedown", { clientX: 240, clientY: 100 });
+                                    node.simulate("click", { clientX: 240, clientY: 100 });
+                                    node.simulate("mouseup", { clientX: 240, clientY: 100 }); map_l3_order++; break;
+                            case 7: node.simulate("mousedown", { clientX: 460, clientY: 460 }); map_l3_order++; break;
+                            case 8: map_l3_order++; break;
+                            case 9: node.simulate("mousedown", { clientX: 460, clientY: 490 }); 
                                     node.simulate("click", { clientX: 460, clientY: 490 });
                                     node.simulate("mouseup", { clientX: 460, clientY: 490 });
                                     map_l3_order++; break;
-                            case 9: $("#mypage")[0].click(); map_l3_order = 0; layer = 0; break;
+                            case 10: $("#mypage")[0].click(); map_l3_order = 0; layer = 0; break;
                         }
                     });
                 }
