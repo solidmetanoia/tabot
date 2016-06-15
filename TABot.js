@@ -1,3 +1,4 @@
+                
 // ==UserScript==
 // @name        Taimanin Asagi Battle Bot
 // @version     0.5
@@ -199,6 +200,7 @@ function bot() {
                         }
                     }
                 }
+                
             } else if(layer == 2){ // LAYER TWO /////////////////////////////////////
                 $("#plr_status").text("HP: "+$("#red_gage_num").text()+"; BP: "+bp_split[0]);
                 if(which_event == event_types.RaidMap){             // MAP EVENT
@@ -280,7 +282,7 @@ function bot() {
                                 adv = true;
                                 console.log("Stage clear.");
                             }
-                            if( parseInt(hp_split[0], 10) > parseInt($("#quest_status_window_1").text(), 10)){
+                            if( parseInt(hp_split[0], 10) >= parseInt($("#quest_status_window_1").text(), 10)){
                             console.log("Progressing. HP currently: "+hp_split[0]+"; HP needed: "+$("#quest_status_window_1").text());
                             node.simulate("mousedown", { clientX: 150, clientY: 450 });    
                             //node.simulate("click", { clientX: 150, clientY: 450 });    
@@ -298,6 +300,9 @@ function bot() {
                                 adv = false;
                             }
                         }
+                                                
+                        
+                        
                     });
                     // 450,350 xy = PLEASE CONTINUE
                     // 150,450 xy = CLICK WHEN RAID APPEARS. BETTER FOR GENERLA
