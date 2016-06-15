@@ -199,7 +199,6 @@ function bot() {
                         }
                     }
                 }
-                
             } else if(layer == 2){ // LAYER TWO /////////////////////////////////////
                 $("#plr_status").text("HP: "+$("#red_gage_num").text()+"; BP: "+bp_split[0]);
                 if(which_event == event_types.RaidMap){             // MAP EVENT
@@ -299,9 +298,6 @@ function bot() {
                                 adv = false;
                             }
                         }
-                                                
-                        
-                        
                     });
                     // 450,350 xy = PLEASE CONTINUE
                     // 150,450 xy = CLICK WHEN RAID APPEARS. BETTER FOR GENERLA
