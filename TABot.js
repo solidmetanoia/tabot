@@ -300,12 +300,7 @@ function bot() {
                                 adv = false;
                             }
                         }
-                                                
-                        
-                        
                     });
-                    // 450,350 xy = PLEASE CONTINUE
-                    // 150,450 xy = CLICK WHEN RAID APPEARS. BETTER FOR GENERLA
                 }
             } else if(layer == 3){ // LAYER THREE /////////////////////////////////////
                 if(which_event == event_types.RaidMap){
@@ -373,7 +368,11 @@ function bot() {
                                     node.simulate("click", { clientX: 460, clientY: 490 });
                                     node.simulate("mouseup", { clientX: 460, clientY: 490 });
                                     map_l3_order++; break;
-                            case 10: $("#mypage")[0].click(); map_l3_order = 0; layer = 0; break;
+                            case 10:node.simulate("mousedown", { clientX: 460, clientY: 490 }); // Emergency case: Fever.
+                                    node.simulate("click", { clientX: 460, clientY: 490 });
+                                    node.simulate("mouseup", { clientX: 460, clientY: 490 });
+                                    map_l3_order++; break;
+                            case 11: $("#mypage")[0].click(); map_l3_order = 0; layer = 0; break;
                         }
                     });
                 }
