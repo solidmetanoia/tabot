@@ -78,7 +78,7 @@ var hp_split; var bp_split; var adv = false;
 var layer = 0; var bp_used = 2; var attack_str = true;
 // 0 - regular clicker, 1 - arena, 2 - raidmap.
 var which_event = 0;
-var event_types = { "Clicker":0, "Arena":1, "RaidMap":2};
+var event_types = { "Clicker":0, "Arena":1, "RaidMap":2, "Tower":3};
 // Raid event map values.
 var player_pos = [0,0]; var distance_hp = 0;
 var world_raid = [0,0]; var world_raid_exist = false;
@@ -104,21 +104,28 @@ function bot() {
             if(layer==0){ // BASE LAYER
                 $("#plr_status").text("HP: "+$("#red_gage_num").text()+"; BP: "+bp_split[0]);
                 // Confirming event type (3 options)
-                if($("#main_frame").find("> a > img[alt='レイドイベント']").length){
+                if($("#main_frame").find("> a > img[alt='TOWERイベント']").length){
+                    which_event = event_types.Tower;
+                    $('img[alt="TOWERイベント"]')[0].click();
+                    $("#botstatus").text("Tower mode.");
+                } else if($("#main_frame").find("> a > img[alt='レイドイベント']").length){
                     which_event = event_types.RaidMap;
                     $('img[alt="レイドイベント"]')[0].click();
                     $("#botstatus").text("Map or Clicker mode.");
-                }else if($("#main_frame").find("> a > img[alt='PVPイベント']").length){
+                } else if($("#main_frame").find("> a > img[alt='PVPイベント']").length){
                     which_event = event_types.Arena;
                     $('img[alt="PVPイベント"]')[0].click();
                     $("#botstatus").text("PVP Event mode.");
-                }
+                } 
                 else{$('img[alt="クエスト"]')[0].click(); $("#botstatus").text("No events running.");}
                 layer = 1;
             } else if(layer==1){ // LAYER ONE   /////////////////////////////////////
                 $("#plr_status").text("HP: "+$("#red_gage_num").text()+"; BP: "+bp_split[0]);
                 if($("#map").length){
                     $("#botstatus").text("Map Event mode.");
+                } else if($("img[alt=アイコン]").length){
+                    which_event = event_types.Tower;
+                    $("#botstatus").text("Tower mode.");
                 } else {
                     which_event = event_types.Clicker;
                     $("#botstatus").text("Clicker mode.");
@@ -199,6 +206,11 @@ function bot() {
                             console.log(loc_str);
                         }
                     }
+                } else if(which_event == event_types.Tower){
+                    var loc_str = "";
+                    console.log("Tower Layer 1.");
+                    $("img[alt='ステージ']").click();
+                    layer = 2;
                 }
                 
             } else if(layer == 2){ // LAYER TWO /////////////////////////////////////
@@ -273,7 +285,7 @@ function bot() {
                     } else if (bp[0] < bp_used){
                         $(".top_menu_2")[0].click(); // Refreshing the PvP list
                     }
-                } else if(which_event == event_types.Clicker){        // CLICKER
+                } else if(which_event == event_types.Clicker || which_event == event_types.Tower){        // CLICKER
                     YUI().use('node-event-simulate', function(Y) {
                         var node = Y.one("#canvas");
                         // if 100% PUT INTO MEMORY TO CLICK A DIFFERENT LOCATION 2ND TURN
@@ -290,7 +302,6 @@ function bot() {
                                 $("#mypage")[0].click();
                                 layer = 0;
                             }
-                            console.log
                         } else {
                             if(adv){
                                 console.log("Clicking STAGE CLEAR.");
