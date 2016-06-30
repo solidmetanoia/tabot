@@ -123,12 +123,12 @@ function bot() {
                 $("#plr_status").text("HP: "+$("#red_gage_num").text()+"; BP: "+bp_split[0]);
                 if($("#map").length){
                     $("#botstatus").text("Map Event mode.");
-                } else if($("img[alt=アイコン]").length){
-                    which_event = event_types.Tower;
-                    $("#botstatus").text("Tower mode.");
-                } else {
+                } else if($("img[alt=レイドアラートアイコン]").length){
                     which_event = event_types.Clicker;
                     $("#botstatus").text("Clicker mode.");
+                } else {
+                    which_event = event_types.Tower;
+                    $("#botstatus").text("Tower mode.");
                 }
                 // While I could use Switch here, ifs are easier to see.
                 if(which_event == event_types.RaidMap){                 // MAP EVENT
