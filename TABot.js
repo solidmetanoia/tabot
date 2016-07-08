@@ -338,6 +338,45 @@ function bot() {
                         }
                     });
                 } else if(which_event == event_types.Arena){        // ARENA
+                    YUI().use('node-event-simulate', function(Y) {
+                        var node = Y.one("#canvas");
+                        switch(map_l3_order){
+                            case 0: 
+                                console.log("Arena Layer 2");
+                                switch(bp_used){
+                                    case 1 : $("#quest_attack_1").click(); break;
+                                    case 2 : $("#quest_attack_2").click(); break;
+                                    case 3 : $("#quest_attack_3").click(); break;
+                                    default: break;
+                                } map_l3_order++; break;
+                            case 1: map_l3_order++; break;
+                            case 2: map_l3_order++; break;
+                            case 3: node.simulate("mousedown", { clientX: 240, clientY: 100 });
+                                    node.simulate("click", { clientX: 240, clientY: 100 });
+                                    node.simulate("mouseup", { clientX: 240, clientY: 100 }); map_l3_order++; break;
+                            case 4: node.simulate("mousedown", { clientX: 460, clientY: 460 }); map_l3_order++; break;
+                            case 5: map_l3_order++; break;
+                            case 6: 
+                                    if($("#canvas").length){
+                                    node.simulate("mousedown", { clientX: 460, clientY: 490 }); 
+                                    node.simulate("click", { clientX: 460, clientY: 490 });
+                                    node.simulate("mouseup", { clientX: 460, clientY: 490 });
+                                    }
+                                    map_l3_order++; break;
+                            case 7:
+                                    if($("#canvas").length){
+                                        node.simulate("mousedown", { clientX: 460, clientY: 490 }); // Emergency case: Fever.
+                                        node.simulate("click", { clientX: 460, clientY: 490 });
+                                        node.simulate("mouseup", { clientX: 460, clientY: 490 });
+                                    }
+                                    map_l3_order++; break;
+                            case 8: $(".top_menu_2")[0].click(); map_l3_order = 0; layer = 2; break;
+                        }
+                    });
+                    /*
+                    // I know this looks hilarious but you need to hit the timer right.
+                    // Prevents loading of fight and skips to PvP choice screen most of the time.
+                    // If it doesn't, gotta refresh->reset or manually pass->reset.
                     console.log("Arena Layer 2");
                     switch(bp_used){
                         case 1 : $("#quest_attack_1").click(); break;
@@ -359,7 +398,7 @@ function bot() {
                     layer = 2;
                     //$("#mypage").click();
                     //setTimeout(function(){$("#botstatus").click();},500);
-                    
+                    */
                 } else if(which_event == event_types.Clicker){
                     
                     YUI().use('node-event-simulate', function(Y) {
