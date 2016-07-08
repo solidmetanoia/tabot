@@ -104,15 +104,16 @@ function bot() {
             if(layer==0){ // BASE LAYER
                 $("#plr_status").text("HP: "+$("#red_gage_num").text()+"; BP: "+bp_split[0]);
                 // Confirming event type (3 options)
-                if($("#main_frame").find("> a > img[alt='TOWERイベント']").length){
+                //if($("#main_frame").find("> a > img[alt='TOWERイベント']").length && !($("#carousel").find("> a > img[alt='TOWERイベント']").length)){
+                if($("#main_frame > a > img[alt='TOWERイベント']").length){
                     which_event = event_types.Tower;
                     $('img[alt="TOWERイベント"]')[0].click();
                     $("#botstatus").text("Tower mode.");
-                } else if($("#main_frame").find("> a > img[alt='レイドイベント']").length){
+                } else if($("#main_frame > a > img[alt='レイドイベント']").length){
                     which_event = event_types.RaidMap;
                     $('img[alt="レイドイベント"]')[0].click();
                     $("#botstatus").text("Map or Clicker mode.");
-                } else if($("#main_frame").find("> a > img[alt='PVPイベント']").length){
+                } else if($("#main_frame > a > img[alt='PVPイベント']").length){
                     which_event = event_types.Arena;
                     $('img[alt="PVPイベント"]')[0].click();
                     $("#botstatus").text("PVP Event mode.");
@@ -121,14 +122,16 @@ function bot() {
                 layer = 1;
             } else if(layer==1){ // LAYER ONE   /////////////////////////////////////
                 $("#plr_status").text("HP: "+$("#red_gage_num").text()+"; BP: "+bp_split[0]);
-                if($("#map").length){
-                    $("#botstatus").text("Map Event mode.");
-                } else if($("img[alt=レイドアラートアイコン]").length){
-                    which_event = event_types.Clicker;
-                    $("#botstatus").text("Clicker mode.");
-                } else {
-                    which_event = event_types.Tower;
-                    $("#botstatus").text("Tower mode.");
+                if(which_event != event_types.Arena){
+                    if($("#map").length){
+                        $("#botstatus").text("Map Event mode.");
+                    } else if($("img[alt=レイドアラートアイコン]").length){
+                        which_event = event_types.Clicker;
+                        $("#botstatus").text("Clicker mode.");
+                    } else {
+                        which_event = event_types.Tower;
+                        $("#botstatus").text("Tower mode.");
+                    }
                 }
                 // While I could use Switch here, ifs are easier to see.
                 if(which_event == event_types.RaidMap){                 // MAP EVENT
